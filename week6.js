@@ -36,10 +36,13 @@ addTicketBtn.addEventListener("click", function () {
     data.push(obj);
     addTicketForm.reset();
     regionSearch.value = "";
-    renderTickets(data);
+    handleRender(data)
 });
 
-
+function handleRender(data) {
+    renderTickets(data);
+    renderChart(data);
+}
 
 regionSearch.addEventListener('change', function () {
     if (regionSearch.value === "") {
@@ -56,6 +59,54 @@ regionSearch.addEventListener('change', function () {
     };
 });
 
+function renderChart(data) {
+    let totalObj = {};
+    data.forEach(function (item, index) {
+        if (totalObj[item.area] == undefined) {
+            totalObj[item.area] = 1;
+        } else {
+            totalObj[item.area] += 1;
+        }
+    })
+
+
+    // newData = [["高雄", 2], ["台北",1], ["台中", 1]]
+    let newData = [];
+    let area = Object.keys(totalObj);
+    // area output ["高雄","台北","台中"]
+    area.forEach(function (item, index) {
+        let ary = [];
+        ary.push(item);
+        ary.push(totalObj[item]);
+        newData.push(ary);
+    })
+
+    // 將 newData 丟入 c3 產生器
+    const chart = c3.generate({
+        bindto: "#chart",
+        size: {
+            width: 162,
+            height: 192
+        },
+        data: {
+            columns: newData,
+            type: 'donut',
+            colors: {
+                高雄: '#E68618',
+                台中: '#5151D3',
+                台北: '#26C0C7',
+            }
+        },
+        donut: {
+            title: "套票地區比重",
+            width: 10,
+            label: {
+                show: false
+            }
+        }
+    });
+
+}
 
 function renderTickets(tickets) {
 
@@ -95,17 +146,22 @@ function renderTickets(tickets) {
     searchResultText.textContent = `本次搜尋共${tickets.length}筆資料`
 };
 
+
 console.log(axios);
 
 
 function getData() {
-    axios.get(url).then(function (response) {
-        console.log(response.data.data);
-        data = response.data.data;
-        renderTickets(data);
-    })
+    axios.get(url)
+        .then(function (response) {
+            console.log(response.data.data);
+            data = response.data.data;
+            handleRender(data)
+        })
         .catch(function () {
             console.log("發生錯誤")
         })
+
+
 }
-getData(); 
+getData();
+

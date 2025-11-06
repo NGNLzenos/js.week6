@@ -21,6 +21,19 @@ body {
     font-family: "Microsoft JhengHei";
 }
 
+.d-flex {
+    display: flex;
+}
+
+.justify-content-center {
+    justify-content: center;
+}
+
+.ms-auto {
+    margin-left: auto;
+}
+
+
 .addTicket-panel {
     -webkit-box-shadow: 0px 3px 6px #00000029;
     box-shadow: 0px 3px 6px #00000029;
